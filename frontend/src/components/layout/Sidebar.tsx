@@ -12,6 +12,7 @@ import {
   Settings,
   Menu,
   X,
+  FileText,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Project } from "@/types";
@@ -28,6 +29,7 @@ export function Sidebar({ projects }: SidebarProps) {
     { name: "Dashboard", href: "/", icon: Home },
     { name: "Today", href: "/today", icon: Calendar },
     { name: "All Tasks", href: "/tasks", icon: CheckSquare },
+    { name: "Notes", href: "/notes", icon: FileText },
   ];
 
   return (

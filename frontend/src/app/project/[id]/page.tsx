@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useParams } from "next/navigation";
 import { Sidebar, Header } from "@/components/layout";
 import { TaskCard, TaskForm } from "@/components/tasks";
+import { NoteCard, NoteForm } from "@/components/notes";
 import { Plus, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -13,18 +14,20 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { useApp } from "@/lib/store";
+import { useApp } from "@/context";
 import Link from "next/link";
 
 export default function ProjectPage() {
   const params = useParams();
   const projectId = params.id as string;
 
-  const { state, dispatch, getTasksByProject, getProjectById } = useApp();
+  const { state, dispatch, getTasksByProject, getProjectById, getNotesByProject } = useApp();
   const [showTaskForm, setShowTaskForm] = useState(false);
+  const [showNoteForm, setShowNoteForm] = useState(false);
 
   const project = getProjectById(projectId);
   const projectTasks = getTasksByProject(projectId);
+  const projectNotes = getNotesByProject(projectId);
 
   if (!project) {
     return (
@@ -104,6 +107,22 @@ export default function ProjectPage() {
           data: { completed: !todo.completed },
         },
       });
+    }
+  };
+
+  const handleCreateNote = (data: any) => {
+    dispatch({ type: "CREATE_NOTE", payload: { ...data, projectId } });
+    setShowNoteForm(false);
+  };
+
+  const handleEditNote = (note: any) => {
+    // TODO: Implement edit functionality
+    console.log("Edit note:", note);
+  };
+
+  const handleDeleteNote = (noteId: string) => {
+    if (confirm("Are you sure you want to delete this note?")) {
+      dispatch({ type: "DELETE_NOTE", payload: noteId });
     }
   };
 
@@ -237,6 +256,61 @@ export default function ProjectPage() {
                 ))}
               </div>
             )}
+
+            {/* Notes Section */}
+            <div className="mt-12">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-xl font-semibold text-gray-900">Notes</h2>
+                <Dialog open={showNoteForm} onOpenChange={setShowNoteForm}>
+                  <DialogTrigger asChild>
+                    <Button size="sm">
+                      <Plus className="w-4 h-4 mr-2" />
+                      Add Note
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-md">
+                    <DialogHeader>
+                      <DialogTitle>Add New Note</DialogTitle>
+                    </DialogHeader>
+                    <NoteForm
+                      projects={[project]}
+                      onSubmit={handleCreateNote}
+                      onCancel={() => setShowNoteForm(false)}
+                    />
+                  </DialogContent>
+                </Dialog>
+              </div>
+
+              {projectNotes.length === 0 ? (
+                <div className="text-center py-8">
+                  <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <Plus className="w-6 h-6 text-gray-400" />
+                  </div>
+                  <h3 className="text-sm font-medium text-gray-900 mb-1">
+                    No notes yet
+                  </h3>
+                  <p className="text-sm text-gray-600 mb-3">
+                    Add notes to keep track of important information.
+                  </p>
+                  <Button size="sm" onClick={() => setShowNoteForm(true)}>
+                    <Plus className="w-4 h-4 mr-2" />
+                    Add Note
+                  </Button>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {projectNotes.map((note) => (
+                    <NoteCard
+                      key={note.id}
+                      note={note}
+                      project={project}
+                      onEdit={handleEditNote}
+                      onDelete={handleDeleteNote}
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         </main>
       </div>

@@ -12,7 +12,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { useApp } from "@/lib/store";
+import { useApp } from "@/context";
 
 export default function TasksPage() {
   const { state, dispatch, getTasksWithTodos, getProjectById } = useApp();

@@ -43,6 +43,43 @@ export function ProjectCard({
         {project.description && (
           <p className="text-sm text-gray-600 mt-2">{project.description}</p>
         )}
+
+        {/* Assignees */}
+        {project.assignees.length > 0 && (
+          <div className="mt-3">
+            <div className="flex items-center space-x-2">
+              <span className="text-xs text-gray-500">Assignees:</span>
+              <div className="flex -space-x-1">
+                {project.assignees.slice(0, 3).map((assignee) => (
+                  <div
+                    key={assignee.id}
+                    className="w-6 h-6 rounded-full border-2 border-white bg-gray-100 flex items-center justify-center overflow-hidden"
+                    title={assignee.name}
+                  >
+                    {assignee.avatar ? (
+                      <img
+                        src={assignee.avatar}
+                        alt={assignee.name}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <span className="text-xs font-medium text-gray-600">
+                        {assignee.name.charAt(0).toUpperCase()}
+                      </span>
+                    )}
+                  </div>
+                ))}
+                {project.assignees.length > 3 && (
+                  <div className="w-6 h-6 rounded-full border-2 border-white bg-gray-200 flex items-center justify-center">
+                    <span className="text-xs font-medium text-gray-600">
+                      +{project.assignees.length - 3}
+                    </span>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
       </CardHeader>
 
       <CardContent>

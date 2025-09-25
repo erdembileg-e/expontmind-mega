@@ -12,14 +12,14 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { useApp } from "@/lib/store";
+import { useApp } from "@/context";
 
 export default function ProjectsPage() {
   const { state, dispatch, getTasksWithTodos } = useApp();
   const [showProjectForm, setShowProjectForm] = useState(false);
 
   const tasksWithTodos = getTasksWithTodos();
-
+  console.log("ProjectsPage state:", state);
   const handleCreateProject = (data: any) => {
     dispatch({ type: "CREATE_PROJECT", payload: data });
     setShowProjectForm(false);
@@ -69,6 +69,7 @@ export default function ProjectsPage() {
                     <DialogTitle>Create New Project</DialogTitle>
                   </DialogHeader>
                   <ProjectForm
+                    users={state.users}
                     onSubmit={handleCreateProject}
                     onCancel={() => setShowProjectForm(false)}
                   />

@@ -5,21 +5,24 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { CreateProjectData } from "@/types";
+import { Checkbox } from "@/components/ui/checkbox";
+import { CreateProjectData, User } from "@/types";
 import { getProjectColors } from "@/lib/utils";
 
 interface ProjectFormProps {
+  users: User[];
   onSubmit: (data: CreateProjectData) => void;
   onCancel: () => void;
 }
 
-export function ProjectForm({ onSubmit, onCancel }: ProjectFormProps) {
+export function ProjectForm({ users, onSubmit, onCancel }: ProjectFormProps) {
   const [formData, setFormData] = useState<CreateProjectData>({
     name: "",
     description: "",
     color: getProjectColors()[0],
+    assignees: [],
   });
-
+  console.log("formData", formData);
   const colors = getProjectColors();
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -30,6 +33,21 @@ export function ProjectForm({ onSubmit, onCancel }: ProjectFormProps) {
         name: "",
         description: "",
         color: getProjectColors()[0],
+        assignees: [],
+      });
+    }
+  };
+
+  const handleAssigneeChange = (userId: string, checked: boolean) => {
+    if (checked) {
+      setFormData({
+        ...formData,
+        assignees: [...formData.assignees, userId],
+      });
+    } else {
+      setFormData({
+        ...formData,
+        assignees: formData.assignees.filter((id) => id !== userId),
       });
     }
   };
@@ -60,6 +78,41 @@ export function ProjectForm({ onSubmit, onCancel }: ProjectFormProps) {
           placeholder="Enter project description..."
           className="resize-none"
         />
+      </div>
+
+      {/* Assignees */}
+      <div className="space-y-2">
+        <Label>Assignees</Label>
+        <div className="space-y-2 max-h-32 overflow-y-auto">
+          {users && users.length > 0 ? (
+            users.map((user) => (
+              <div key={user.id} className="flex items-center space-x-2">
+                <Checkbox
+                  id={`assignee-${user.id}`}
+                  checked={formData.assignees.includes(user.id)}
+                  onCheckedChange={(checked) =>
+                    handleAssigneeChange(user.id, checked as boolean)
+                  }
+                />
+                <Label
+                  htmlFor={`assignee-${user.id}`}
+                  className="flex items-center space-x-2 cursor-pointer"
+                >
+                  {user.avatar && (
+                    <img
+                      src={user.avatar}
+                      alt={user.name}
+                      className="w-6 h-6 rounded-full"
+                    />
+                  )}
+                  <span>{user.name}</span>
+                </Label>
+              </div>
+            ))
+          ) : (
+            <p className="text-sm text-gray-500">No users available</p>
+          )}
+        </div>
       </div>
 
       {/* Color Selection */}

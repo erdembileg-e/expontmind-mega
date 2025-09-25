@@ -17,7 +17,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { useApp } from "@/lib/store";
+import { useApp } from "@/context";
 
 export default function Dashboard() {
   const { state, dispatch, getTasksWithTodos } = useApp();
@@ -59,6 +59,7 @@ export default function Dashboard() {
                     <DialogTitle>Create New Project</DialogTitle>
                   </DialogHeader>
                   <ProjectForm
+                    users={state.users}
                     onSubmit={handleCreateProject}
                     onCancel={() => setShowProjectForm(false)}
                   />

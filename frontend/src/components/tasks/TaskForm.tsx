@@ -14,6 +14,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { Flag } from "lucide-react";
 import { CreateTaskData, Project, Priority } from "@/types";
+import { useParams } from "next/navigation";
 
 interface TaskFormProps {
   projects: Project[];
@@ -22,12 +23,14 @@ interface TaskFormProps {
 }
 
 export function TaskForm({ projects, onSubmit, onCancel }: TaskFormProps) {
+  const { id } = useParams();
   const [formData, setFormData] = useState<CreateTaskData>({
     title: "",
     description: "",
     priority: "medium",
     dueDate: undefined,
-    projectId: projects[0]?.id || "",
+    projectId: id as string,
+    assigneeId: undefined,
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -40,9 +43,15 @@ export function TaskForm({ projects, onSubmit, onCancel }: TaskFormProps) {
         priority: "medium",
         dueDate: undefined,
         projectId: projects[0]?.id || "",
+        assigneeId: undefined,
       });
     }
   };
+  console.log("projects", projects);
+  
+  const selectedProject = projects.find((p) => p.id === formData.projectId);
+  console.log("selectedProject", selectedProject);
+  const availableAssignees = selectedProject?.assignees || [];
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
@@ -78,7 +87,7 @@ export function TaskForm({ projects, onSubmit, onCancel }: TaskFormProps) {
         <Select
           value={formData.projectId}
           onValueChange={(value) =>
-            setFormData({ ...formData, projectId: value })
+            setFormData({ ...formData, projectId: value, assigneeId: undefined })
           }
         >
           <SelectTrigger>
@@ -88,6 +97,38 @@ export function TaskForm({ projects, onSubmit, onCancel }: TaskFormProps) {
             {projects.map((project) => (
               <SelectItem key={project.id} value={project.id}>
                 {project.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+
+      {/* Assignee */}
+      <div className="space-y-2">
+        <Label htmlFor="assignee">Assignee</Label>
+        <Select
+          value={formData.assigneeId || "none"}
+          onValueChange={(value) =>
+            setFormData({ ...formData, assigneeId: value === "none" ? undefined : value })
+          }
+        >
+          <SelectTrigger>
+            <SelectValue placeholder="Select an assignee" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="none">No assignee</SelectItem>
+            {availableAssignees.map((assignee) => (
+              <SelectItem key={assignee.id} value={assignee.id}>
+                <div className="flex items-center space-x-2">
+                  {assignee.avatar && (
+                    <img
+                      src={assignee.avatar}
+                      alt={assignee.name}
+                      className="w-4 h-4 rounded-full"
+                    />
+                  )}
+                  <span>{assignee.name}</span>
+                </div>
               </SelectItem>
             ))}
           </SelectContent>

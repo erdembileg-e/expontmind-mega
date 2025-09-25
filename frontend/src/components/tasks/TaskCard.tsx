@@ -89,7 +89,7 @@ export function TaskCard({
               <p className="text-xs text-gray-600 mb-2">{task.description}</p>
             )}
 
-            {/* Project and Due Date */}
+            {/* Project, Assignee, and Due Date */}
             <div className="flex items-center space-x-4 text-xs text-gray-500 mb-3">
               <div className="flex items-center space-x-1">
                 <div
@@ -98,6 +98,27 @@ export function TaskCard({
                 />
                 <span>{project.name}</span>
               </div>
+
+              {task.assignee && (
+                <div className="flex items-center space-x-1">
+                  <div className="w-4 h-4 rounded-full border border-gray-300 overflow-hidden">
+                    {task.assignee.avatar ? (
+                      <img
+                        src={task.assignee.avatar}
+                        alt={task.assignee.name}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+                        <span className="text-xs font-medium text-gray-600">
+                          {task.assignee.name.charAt(0).toUpperCase()}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                  <span>{task.assignee.name}</span>
+                </div>
+              )}
 
               {task.dueDate && (
                 <div className="flex items-center space-x-1">

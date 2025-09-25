@@ -3,6 +3,7 @@ export interface Project {
   name: string;
   description?: string;
   color: string;
+  assignees: User[];
   createdAt: Date;
   updatedAt: Date;
   tasks: Task[];
@@ -15,6 +16,7 @@ export interface Task {
   completed: boolean;
   priority: "low" | "medium" | "high";
   dueDate?: Date;
+  assignee?: User;
   createdAt: Date;
   updatedAt: Date;
   projectId: string;
@@ -43,6 +45,7 @@ export interface CreateProjectData {
   name: string;
   description?: string;
   color: string;
+  assignees: string[];
 }
 
 export interface CreateTaskData {
@@ -51,6 +54,7 @@ export interface CreateTaskData {
   priority: Priority;
   dueDate?: Date;
   projectId: string;
+  assigneeId?: string;
 }
 
 export interface CreateTodoData {
@@ -64,9 +68,30 @@ export interface UpdateTaskData {
   completed?: boolean;
   priority?: Priority;
   dueDate?: Date;
+  assigneeId?: string;
 }
 
 export interface UpdateTodoData {
   text?: string;
   completed?: boolean;
+}
+
+export interface Note {
+  id: string;
+  title: string;
+  content: string;
+  projectId: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface CreateNoteData {
+  title: string;
+  content: string;
+  projectId: string;
+}
+
+export interface UpdateNoteData {
+  title?: string;
+  content?: string;
 }
